@@ -168,4 +168,46 @@ namespace pi::test::type_list::find
         static_assert(tl::find<double, char, bool, short, int, unsigned, long, float, double>() == 7
             , "double is found at position 8 in { double, bool, short, int, unsigned, long, float, double }");
     }
+
+    auto test_that_the_index_of_a_type_with_modifiers_reference_or_pointer_is_correctly_detected_in_a_list_with_all_of_its_forms()
+    {
+        static_assert(tl::find<int, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 0,
+            "int is at index 0 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
+        static_assert(tl::find<int const, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 1,
+            "int is at index 0 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
+        static_assert(tl::find<int &, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 2,
+            "int is at index 0 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
+        static_assert(tl::find<int const &, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 3,
+            "int is at index 0 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
+        static_assert(tl::find<int &&, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 4,
+            "int is at index 0 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
+        static_assert(tl::find<int *, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 5,
+            "int is at index 0 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
+        static_assert(tl::find<int *const, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 6,
+            "int is at index 0 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
+        static_assert(tl::find<int const *, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 7,
+            "int is at index 0 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
+        static_assert(tl::find<int const *const, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 8,
+            "int is at index 0 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
+    }
+
+    auto test_that_the_result_of_find_is_the_index_of_the_first_matching_type_according_to_the_search_policy()
+    {
+        static_assert(tl::find<int, int &&, int &, int const &, int const>() == -1
+            , "int is not found in { int &&, int &, int const &, int const }");
+        static_assert(tl::find<tl::search_policy::ignore_const, int, int &&, int &, int const &, int const>() == 3
+            , "int is found at 3 in { int &&, int &, int const &, int const } with ignore const policy");
+        static_assert(tl::find<tl::search_policy::ignore_reference, int, int &&, int &, int const &, int const>() == 0
+            , "int is found at 1 in { int &&, int &, int const &, int const } with ignore const policy");
+        static_assert(tl::find<tl::search_policy::ignore_reference, int const, int &&, int &, int const &, int const>() == 2
+            , "'int const' is found at 2 in { int &&, int &, int const &, int const } with ignore reference policy");
+        static_assert(tl::find<tl::search_policy::ignore_const_and_reference, int, int &&, int &, int const &, int const>() == 0
+            , "int is found at 0 in { int &&, int &, int const &, int const } with ignore const and reference policy");
+        static_assert(tl::find<int *const, int *, int const *, int *const, int const *const>() == 2
+            , "'int *const' is found at 2 in { int *, int const *, int *const, int const *const }");
+        static_assert(tl::find<int const *const, int *, int const *, int *const, int const *const>() == 3
+            , "'int const *const' is found at 3 in { int *, int const *, int *const, int const *const }");
+        static_assert(tl::find<tl::search_policy::ignore_const, int *, int const *, int *const, int const *const>() == 0
+            , "'int *const' is found at 2 in { int *, int const *, int *const, int const *const }");
+    }
 }

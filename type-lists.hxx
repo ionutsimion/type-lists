@@ -40,9 +40,9 @@ namespace pi::type_list
             return -1;
 
         if constexpr (sizeof...(RestOfTheTypeList) == 0)
-            return std::is_same_v<TypeToFind, FirstTypeInTheTypeList> - 1;
+            return static_cast<int>(std::is_same_v<TypeToFind, FirstTypeInTheTypeList>) - 1;
         else
-            return 1 + find<TypeToFind, RestOfTheTypeList...>();
+            return !static_cast<int>(std::is_same_v<TypeToFind, FirstTypeInTheTypeList>) * (1 + find<TypeToFind, RestOfTheTypeList...>());
     }
 
     template <typename T>
@@ -87,8 +87,8 @@ namespace pi::type_list
                                           , std::remove_reference_t<RestOfTheTypeList>...>();
             else if constexpr (SearchPolicy == search_policy::ignore_const_and_reference)
                 return pi::type_list::count<TypeToCount
-                                          , std::remove_cv_t<std::remove_reference_t<remove_cv_from_reference_t<FirstTypeInTheTypeList>>>
-                                          , std::remove_cv_t<std::remove_reference_t<remove_cv_from_reference_t<RestOfTheTypeList>>>...>();
+                                          , std::remove_cv_t<std::remove_reference_t<remove_cv_from_reference_or_pointer_t<FirstTypeInTheTypeList>>>
+                                          , std::remove_cv_t<std::remove_reference_t<remove_cv_from_reference_or_pointer_t<RestOfTheTypeList>>>...>();
 
             return pi::type_list::count<TypeToCount, FirstTypeInTheTypeList, RestOfTheTypeList...>();
         }
@@ -105,8 +105,8 @@ namespace pi::type_list
                                          , std::remove_reference_t<RestOfTheTypeList>...>();
             else if constexpr (SearchPolicy == search_policy::ignore_const_and_reference)
                 return pi::type_list::find<TypeToCount
-                                         , std::remove_cv_t<std::remove_reference_t<remove_cv_from_reference_t<FirstTypeInTheTypeList>>>
-                                         , std::remove_cv_t<std::remove_reference_t<remove_cv_from_reference_t<RestOfTheTypeList>>>...>();
+                                         , std::remove_cv_t<std::remove_reference_t<remove_cv_from_reference_or_pointer_t<FirstTypeInTheTypeList>>>
+                                         , std::remove_cv_t<std::remove_reference_t<remove_cv_from_reference_or_pointer_t<RestOfTheTypeList>>>...>();
 
             return pi::type_list::find<TypeToCount, FirstTypeInTheTypeList, RestOfTheTypeList...>();
         }

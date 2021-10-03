@@ -1,13 +1,8 @@
-//
-// Created by ionut on 25.09.2021.
-//
-
-#ifndef TYPE_LISTS_TYPE_LISTS_HXX
-#define TYPE_LISTS_TYPE_LISTS_HXX
+#pragma once
 
 #include <type_traits>
 
-namespace pi::type_list
+namespace pi::type_lists
 {
     /**
      * @brief Count the number of appearances of the first template parameter into the list of types which follows it.
@@ -78,37 +73,37 @@ namespace pi::type_list
         static auto constexpr count() noexcept
         {
             if constexpr (SearchPolicy == search_policy::ignore_const)
-                return pi::type_list::count<TypeToCount
+                return pi::type_lists::count<TypeToCount
                                           , std::remove_cv_t<remove_cv_from_reference_or_pointer_t<FirstTypeInTheTypeList>>
                                           , std::remove_cv_t<remove_cv_from_reference_or_pointer_t<RestOfTheTypeList>>...>();
             else if constexpr (SearchPolicy == search_policy::ignore_reference)
-                return pi::type_list::count<TypeToCount
+                return pi::type_lists::count<TypeToCount
                                           , std::remove_reference_t<FirstTypeInTheTypeList>
                                           , std::remove_reference_t<RestOfTheTypeList>...>();
             else if constexpr (SearchPolicy == search_policy::ignore_const_and_reference)
-                return pi::type_list::count<TypeToCount
+                return pi::type_lists::count<TypeToCount
                                           , std::remove_cv_t<std::remove_reference_t<remove_cv_from_reference_or_pointer_t<FirstTypeInTheTypeList>>>
                                           , std::remove_cv_t<std::remove_reference_t<remove_cv_from_reference_or_pointer_t<RestOfTheTypeList>>>...>();
 
-            return pi::type_list::count<TypeToCount, FirstTypeInTheTypeList, RestOfTheTypeList...>();
+            return pi::type_lists::count<TypeToCount, FirstTypeInTheTypeList, RestOfTheTypeList...>();
         }
 
         static auto constexpr find() noexcept
         {
             if constexpr (SearchPolicy == search_policy::ignore_const)
-                return pi::type_list::find<TypeToCount
+                return pi::type_lists::find<TypeToCount
                                          , std::remove_cv_t<remove_cv_from_reference_or_pointer_t<FirstTypeInTheTypeList>>
                                          , std::remove_cv_t<remove_cv_from_reference_or_pointer_t<RestOfTheTypeList>>...>();
             else if constexpr (SearchPolicy == search_policy::ignore_reference)
-                return pi::type_list::find<TypeToCount
+                return pi::type_lists::find<TypeToCount
                                          , std::remove_reference_t<FirstTypeInTheTypeList>
                                          , std::remove_reference_t<RestOfTheTypeList>...>();
             else if constexpr (SearchPolicy == search_policy::ignore_const_and_reference)
-                return pi::type_list::find<TypeToCount
+                return pi::type_lists::find<TypeToCount
                                          , std::remove_cv_t<std::remove_reference_t<remove_cv_from_reference_or_pointer_t<FirstTypeInTheTypeList>>>
                                          , std::remove_cv_t<std::remove_reference_t<remove_cv_from_reference_or_pointer_t<RestOfTheTypeList>>>...>();
 
-            return pi::type_list::find<TypeToCount, FirstTypeInTheTypeList, RestOfTheTypeList...>();
+            return pi::type_lists::find<TypeToCount, FirstTypeInTheTypeList, RestOfTheTypeList...>();
         }
     };
 
@@ -123,7 +118,7 @@ namespace pi::type_list
     template <search_policy SearchPolicy, typename TypeToCount, typename FirstTypeInTheTypeList, typename ...RestOfTheTypeList>
     auto constexpr count() noexcept
     {
-        return pi::type_list::search_policy_t<SearchPolicy, TypeToCount, FirstTypeInTheTypeList, RestOfTheTypeList...>::count();
+        return pi::type_lists::search_policy_t<SearchPolicy, TypeToCount, FirstTypeInTheTypeList, RestOfTheTypeList...>::count();
     }
 
     /**
@@ -137,8 +132,6 @@ namespace pi::type_list
     template <search_policy SearchPolicy, typename TypeToCount, typename FirstTypeInTheTypeList, typename ...RestOfTheTypeList>
     auto constexpr find() noexcept
     {
-        return pi::type_list::search_policy_t<SearchPolicy, TypeToCount, FirstTypeInTheTypeList, RestOfTheTypeList...>::find();
+        return pi::type_lists::search_policy_t<SearchPolicy, TypeToCount, FirstTypeInTheTypeList, RestOfTheTypeList...>::find();
     }
 }
-
-#endif //TYPE_LISTS_TYPE_LISTS_HXX

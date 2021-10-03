@@ -3,4 +3,4 @@ project(type_lists)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(type_lists main.cpp tests.cpp type-lists.hxx "tests.cpp")
+add_executable(type_lists main.cpp tests.cpp tests.hxx type-lists.hxx "tests.cpp" "arguments.hxx" "tests.hxx")

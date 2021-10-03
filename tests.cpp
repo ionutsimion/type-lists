@@ -1,10 +1,17 @@
+#include <cassert>
 #include <cstdint>
+#include <iostream>
+#include <string>
 
 #include "type-lists.hxx"
+#include "arguments.hxx"
 
-namespace tl = pi::type_list;
+#include "tests.hxx"
 
-namespace pi::test::type_list::count
+namespace tl = pi::type_lists;
+namespace arg = pi::arguments;
+
+namespace pi::test::type_lists::count
 {
     auto test_that_several_fundamental_types_against_a_list_of_all_tested_fundamental_types()
     {
@@ -38,8 +45,10 @@ namespace pi::test::type_list::count
 
     auto test_that_a_type_is_found_for_as_many_times_it_appears_in_the_list()
     {
-        static_assert(tl::count<int, int, int>() == 2, "int is found twice in { int, int }");
-        static_assert(tl::count<int, int, int, int, int, int>() == 5, "int is found twice in { int, int, int, int, int }");
+        static_assert(tl::count<int, int, int>() == 2
+            , "int is found twice in { int, int }");
+        static_assert(tl::count<int, int, int, int, int, int>() == 5
+            , "int is found twice in { int, int, int, int, int }");
     }
 
     auto test_that_a_type_is_found_in_a_list_with_itself_as_const_or_reference_or_const_reference_only_if_it_is_identical_to_one_in_the_list()
@@ -147,7 +156,7 @@ namespace pi::test::type_list::count
     }
 }
 
-namespace pi::test::type_list::find
+namespace pi::test::type_lists::find
 {
     auto test_that_the_index_of_several_fundamental_types_against_a_list_of_all_tested_fundamental_types_is_as_expected()
     {
@@ -210,4 +219,29 @@ namespace pi::test::type_list::find
         static_assert(tl::find<tl::search_policy::ignore_const, int *, int const *, int *const, int const *const>() == 0
             , "'int *const' is found at 2 in { int *, int const *, int *const, int const *const }");
     }
+}
+
+namespace pi::test::arguments::default_or_argument
+{
+    auto constexpr test_that_if_the_type_of_an_argument_is_not_found_the_default_is_assigned() noexcept
+    {
+        static_assert(arg::default_or_argument(1, 'a', 10.0, 12.1f) == 1
+            , "an int is not found in { 'a', 10.0, 12.1f } and the default '1' is returned");
+        static_assert(arg::default_or_argument("(null)", 'a', 10.0, 12.1f) == "(null)"
+            , "a 'char *' is not found in { 'a', 10.0, 12.1f }, so the default '(null)' is returned");
+        static_assert(arg::default_or_argument(1, 'a', 10.0, 12.1f) == 1
+            , "an int is not found in { 'a', 10.0, 12.1f } and the default '1' is returned");
+        auto constexpr x = 42;
+        static_assert(arg::default_or_argument(1, 'a', 10.0, 12.1f, x) == 1
+            , "an is not found in { 'a', 10.0, 12.1f, x }, where x is a constexpr int, and the default '1' is returned");
+    }
+}
+
+void pi::test::run()
+{
+    using namespace std::string_literals;
+
+    assert(arg::default_or_argument("x"s, "y"s) != "x"s);
+    assert(arg::default_or_argument("x"s, "y"s) == "y"s);
+    assert(arg::default_or_argument("x"s, "y") == "x"s);
 }

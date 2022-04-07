@@ -7,12 +7,12 @@ namespace pi::arguments
     template <int Index, typename FirstArgument, typename ...RestOfArguments>
     auto constexpr get(FirstArgument &&first_argument, RestOfArguments &&...rest_of_arguments)
     {
-        if constexpr (Index == 0)
+        if constexpr (Index > 0)
         {
-            return std::forward<FirstArgument>(first_argument);
+            return get<Index - 1>(std::forward<RestOfArguments>(rest_of_arguments)...);
         }
 
-        return get<Index - 1, RestOfArguments...>(std::forward<RestOfArguments>(rest_of_arguments)...);
+        return std::forward<FirstArgument>(first_argument);
     }
 
     using pi::type_lists::matching;
@@ -22,10 +22,12 @@ namespace pi::arguments
     {
         static_assert(sizeof...(Arguments) > 0, "At least one argument must be provided");
 
-        if constexpr (auto constexpr index = pi::type_lists::find<Matching, TypeToFind, Arguments...>(); index == -1)
-            return std::forward<TypeToFind>(default_value);
-        else
+        if constexpr (auto constexpr index = pi::type_lists::find<Matching, TypeToFind, Arguments...>(); index != type_lists::n_pos)
+        {
             return get<index>(std::forward<Arguments>(arguments)...);
+        }
+
+        return std::forward<TypeToFind>(default_value);
     }
 
     template <typename TypeToFind, typename ...Arguments>

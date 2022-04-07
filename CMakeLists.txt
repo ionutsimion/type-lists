@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 project(type_lists)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 
-add_executable(type_lists main.cpp tests.cpp tests.hxx type-lists.hxx "tests.cpp" "arguments.hxx" "tests.hxx")
+add_executable(type_lists main.cpp tests.cpp tests.hxx type-lists.hxx)

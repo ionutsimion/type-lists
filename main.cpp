@@ -1,8 +1,3 @@
-#include <iostream>
-
-#include "type-lists.hxx"
-#include "arguments.hxx"
-
 #include "tests.hxx"
 
 int main()

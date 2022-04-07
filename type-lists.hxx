@@ -44,7 +44,7 @@ namespace pi::type_lists
     template <matching Matching, typename Type, typename ...TypeList>
     auto constexpr count()
     {
-        return (... + std::is_same_v<Type, adjust_for_matching_t<TypeList, Matching>>);
+        return (... + std::is_same_v<adjust_for_matching_t<Type, Matching>, adjust_for_matching_t<TypeList, Matching>>);
     }
 
     /**
@@ -72,7 +72,7 @@ namespace pi::type_lists
             return n_pos;
         }
 
-        return internal::find<Type, adjust_for_matching_t<TypeList, Matching>...>();
+        return internal::find<adjust_for_matching_t<Type, Matching>, adjust_for_matching_t<TypeList, Matching>...>();
     }
 
     /**

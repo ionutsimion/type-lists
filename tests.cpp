@@ -1,5 +1,3 @@
-#include <cassert>
-#include <cmath>
 #include <cstdint>
 #include <string>
 #include <string_view>
@@ -140,6 +138,18 @@ namespace pi::test::type_lists::find
         static_assert(tl::find<tl::matching::strict, int const *const, int *, int const *, int *const, int const *const>() == 3
             , "'int const *const' is not found at 3 in { int *, int const *, int *const, int const *const }");
     }
+
+    auto constexpr test_that_find_nth_returns_the_expected_indices()
+    {
+        static_assert(tl::find_nth_v<int, 1ULL, double, int> == 1
+            , "the first int is not found at index 1");
+        static_assert(tl::find_nth_v<int, 2ULL, double, int, float, int> == 3
+            , "the second int is not found at index 3");
+        static_assert(tl::find_nth<tl::matching::relaxed, int, 2ULL, double, int, float, int>() == 3
+            , "the second int is not found at index 3");
+        static_assert(tl::find_nth<tl::matching::strict, int const, 1ULL, double, int, float, int const>() == 3
+            , "the first int is not found at index 1");
+    }
 }
 
 namespace pi::test::arguments::default_or_argument
@@ -187,6 +197,7 @@ void pi::test::run()
         test_that_the_index_of_each_type_in_a_list_is_as_expected();
         test_that_the_index_of_a_type_with_modifiers_reference_or_pointer_is_correctly_detected_in_a_list_with_some_of_its_variants_and_strict_matching();
         test_that_the_result_of_find_is_the_index_of_the_first_matching_type_according_to_the_strategy();
+        test_that_find_nth_returns_the_expected_indices();
     } // type_list::find tests
 
     { // pi::test::arguments::default_or_argument tests

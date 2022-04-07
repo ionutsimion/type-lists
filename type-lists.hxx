@@ -6,16 +6,29 @@ namespace pi::type_lists
 {
     namespace internal
     {
-        template <typename Type, typename First, typename ...Rest>
-        auto constexpr find() noexcept
+        template <typename Type, std::size_t Nth, typename First, typename ...Rest>
+        [[nodiscard]] auto constexpr find_nth() noexcept
         {
-            if constexpr (std::is_same_v<First, Type> || sizeof...(Rest) == size_t{ 0 })
+            if constexpr ((Nth == 1ULL && std::is_same_v<First, Type>)|| sizeof...(Rest) == 0ULL)
             {
-                return  0;
+                return 0;
             }
             else
             {
-                return 1 + internal::find<Type, Rest...>();
+                return 1 + find_nth<Type, Nth - std::is_same_v<Type, First>, Rest...>();
+            }
+        }
+
+        template <typename Type, typename First, typename ...Rest>
+        [[nodiscard]] auto constexpr find() noexcept
+        {
+            if constexpr (std::is_same_v<First, Type> || sizeof...(Rest) == 0ULL)
+            {
+                return 0;
+            }
+            else
+            {
+                return 1 + find<Type, Rest...>();
             }
         }
     } // namespace internal
@@ -45,7 +58,7 @@ namespace pi::type_lists
      * @return The number of matches of Type in TypeList.
      */
     template <matching Matching, typename Type, typename ...TypeList>
-    auto constexpr count()
+    [[nodiscard]] auto constexpr count()
     {
         return (... + std::is_same_v<adjust_for_matching_t<Type, Matching>, adjust_for_matching_t<TypeList, Matching>>);
     }
@@ -58,7 +71,24 @@ namespace pi::type_lists
      * @note Effectively calls \a count with \a matching::strict strategy.
      */
     template <typename Type, typename ...TypeList>
-    auto constexpr count_v = count<matching::relaxed, Type, TypeList...>();
+    [[maybe_unused]] auto constexpr count_v = count<matching::relaxed, Type, TypeList...>();
+
+    template <matching Matching, typename Type, std::size_t Nth, typename ...TypeList>
+    [[nodiscard]] auto constexpr find_nth() noexcept
+    {
+        static_assert(sizeof...(TypeList) > 0ULL, "At least one type is expected.");
+        static_assert(Nth > 0 && Nth <= sizeof...(TypeList), "Nth is a 1-based index at most equal to the number of the type list elements.");
+
+        if constexpr (count<Matching, Type, TypeList...>() < Nth)
+        {
+            return npos;
+        }
+
+        return internal::find_nth<adjust_for_matching_t<Type, Matching>, Nth, adjust_for_matching_t<TypeList, Matching>...>();
+    }
+
+    template <typename Type, std::size_t Nth, typename ...TypeList>
+    [[maybe_unused]] auto constexpr find_nth_v = find_nth<matching::relaxed, Type, Nth, TypeList...>();
 
     /**
      * @brief Find the first appearance of the first template parameter into the list of types which follows it.
@@ -68,9 +98,9 @@ namespace pi::type_lists
      * @return The index of Type in TypeList. If no match is found, returns \a pi::type_list::npos.
      */
     template <matching Matching, typename Type, typename ...TypeList>
-    auto constexpr find() noexcept
+    [[nodiscard]] auto constexpr find() noexcept
     {
-        if constexpr (count<Matching, Type, TypeList...>() == size_t{ 0 })
+        if constexpr (count<Matching, Type, TypeList...>() == 0ULL)
         {
             return npos;
         }
@@ -86,5 +116,5 @@ namespace pi::type_lists
      * @note Effectively calls \a find with \a matching::strict strategy.
      */
     template <typename Type, typename ...TypeList>
-    auto constexpr find_v = find<matching::relaxed, Type, TypeList...>();
+    [[maybe_unused]] auto constexpr find_v = find<matching::relaxed, Type, TypeList...>();
 } // namespace pi::type_list

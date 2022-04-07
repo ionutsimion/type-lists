@@ -7,7 +7,7 @@ namespace pi::arguments
     namespace internal
     {
         template <int Index, typename FirstArgument, typename ...RestOfArguments>
-        auto constexpr get(FirstArgument &&first_argument, RestOfArguments &&...rest_of_arguments)
+        [[nodiscard]] auto constexpr get(FirstArgument &&first_argument, RestOfArguments &&...rest_of_arguments)
         {
             if constexpr (Index > 0)
             {
@@ -28,7 +28,7 @@ namespace pi::arguments
      * @return The \a default_value or the argument of the same type as the default.
      */
     template <type_lists::matching Matching, typename Type, typename ...ArgumentTypes>
-    auto constexpr default_or_argument(Type &&default_value, ArgumentTypes &&...arguments) noexcept
+    [[nodiscard]] auto constexpr default_or_argument(Type &&default_value, ArgumentTypes &&...arguments) noexcept
     {
         if constexpr (auto constexpr index = type_lists::find<Matching, Type, ArgumentTypes...>(); index != type_lists::npos)
         {
@@ -48,7 +48,7 @@ namespace pi::arguments
      * @note Effectively calls \a default_or_argument with \a matching::strict strategy.
      */
     template <typename Type, typename ...ArgumentTypes>
-    auto constexpr default_or_argument(Type &&default_value, ArgumentTypes &&...arguments) noexcept
+    [[nodiscard]] auto constexpr default_or_argument(Type &&default_value, ArgumentTypes &&...arguments) noexcept
     {
         return default_or_argument<type_lists::matching::relaxed>(std::forward<Type>(default_value), std::forward<ArgumentTypes>(arguments)...);
     }

@@ -5,11 +5,9 @@
 namespace pi::type_lists
 {
     /**
-     * @brief Search policies are used for counting or finding types in type lists.
-     * @enum strict Matches the types if they have exactly the same modifiers (including none) and are the same type of pointers or references (including none).
-     * @enum ignore_const Matches the types only if the type to search for is identical to one from the list without const modifier.
-     * @enum ignore_reference Matches the types only of the type to search for is identical to one from the list without references.
-     * @enum relaxed Matches the type only if the type to search for is identical to one from the list without references or const modifier.
+     * @brief Matching strategies are used for counting or finding types in type list.
+     * @enum strict: Matches the types if they are exactly the same (both are values or l-reference or r-reference; both are const or volatile etc.)
+     * @enum relaxed: Matches the types regardless of modifiers; also, values are matched to references.
      */
     enum class matching
     {
@@ -50,10 +48,15 @@ namespace pi::type_lists
             return -1;
         }
 
+        constexpr bool the_first_is_the_one = std::is_same_v<TypeToFind, adjust_for_matching_t < FirstTypeInTheTypeList, Matching>>;
         if constexpr (sizeof...(RestOfTheTypeList) == 0)
-            return static_cast<int>(std::is_same_v<TypeToFind, adjust_for_matching_t<FirstTypeInTheTypeList, Matching>>) - 1;
+        {
+            return static_cast<int>(the_first_is_the_one) - 1;
+        }
         else
-            return !static_cast<int>(std::is_same_v<TypeToFind, adjust_for_matching_t<FirstTypeInTheTypeList, Matching>>) * (1 + find<Matching, TypeToFind, RestOfTheTypeList...>());
+        {
+            return !static_cast<int>(the_first_is_the_one) * (1 + find<Matching, TypeToFind, RestOfTheTypeList...>());
+        }
     }
 
     /**

@@ -200,6 +200,10 @@ void pi::test::run()
         test_that_find_nth_returns_the_expected_indices();
     } // type_list::find tests
 
+    { // type_list::find_mth tests
+        using namespace pi::test::type_lists::find;
+    } // type_list::find_nth tests
+
     { // pi::test::arguments::default_or_argument tests
         using namespace pi::test::arguments::default_or_argument;
 

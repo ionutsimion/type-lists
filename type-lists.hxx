@@ -99,11 +99,12 @@ namespace pi::type_lists
     }
 
     /**
-     * Find the nth appearance of a type into the provided list of types using the relaxed @a matching::strategy.
+     * Find the nth appearance of a type into the provided list of types.
      * @tparam Type The type to search for.
      * @tparam Nth Which instance of @a Type to look for.
      * @tparam TypeList The list of types in which to look for @a Type.
      * @return The index of @a Nth @a Type in @a TypeList if it exists, @a pi::type_list::npos otherwise.
+     * @note Effectively calls @a find_nth with @a matching::relaxed strategy.
      */
     template <typename Type, std::size_t Nth, typename ...TypeList>
     [[maybe_unused]] auto constexpr find_nth_v = find_nth<matching::relaxed, Type, Nth, TypeList...>();

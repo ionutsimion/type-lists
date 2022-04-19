@@ -87,56 +87,83 @@ namespace pi::test::type_lists::find
 {
     auto constexpr test_that_the_index_of_each_type_in_a_list_is_as_expected()
     {
-        static_assert(tl::find_v<char, char, bool, short, int, unsigned, long, float, double> == 0
-            , "char is not found at position 0 in { char, bool, short, int, unsigned, long, float, double }");
-        static_assert(tl::find_v<bool, char, bool, short, int, unsigned, long, float, double> == 1
-            , "bool is not found at position 1 in { char, bool, short, int, unsigned, long, float, double }");
-        static_assert(tl::find_v<short, char, bool, short, int, unsigned, long, float, double> == 2
-            , "short is not found at position 2 in { char, bool, short, int, unsigned, long, float, double }");
-        static_assert(tl::find_v<int, char, bool, short, int, unsigned, long, float, double> == 3
-            , "int is not found at position 3 in { int, bool, short, int, unsigned, long, float, double }");
-        static_assert(tl::find_v<unsigned, char, bool, short, int, unsigned, long, float, double> == 4
-            , "unsigned is not found at position 4 in { unsigned, bool, short, int, unsigned, long, float, double }");
-        static_assert(tl::find_v<long, char, bool, short, int, unsigned, long, float, double> == 5
-            , "long is not found at position 5 in { long, bool, short, int, unsigned, long, float, double }");
-        static_assert(tl::find_v<float, char, bool, short, int, unsigned, long, float, double> == 6
-            , "float is not found at position 6 in { float, bool, short, int, unsigned, long, float, double }");
-        static_assert(tl::find_v<double, char, bool, short, int, unsigned, long, float, double> == 7
-            , "double is not found at position 7 in { double, bool, short, int, unsigned, long, float, double }");
+        static_assert(tl::find_v < char, char, bool, short, int, unsigned, long, float, double > == 0,
+                      "char is not found at position 0 in { char, bool, short, int, unsigned, long, float, double }");
+        static_assert(tl::find_v < bool, char, bool, short, int, unsigned, long, float, double > == 1,
+                      "bool is not found at position 1 in { char, bool, short, int, unsigned, long, float, double }");
+        static_assert(tl::find_v < short, char, bool, short, int, unsigned, long, float, double > == 2,
+                      "short is not found at position 2 in { char, bool, short, int, unsigned, long, float, double }");
+        static_assert(tl::find_v < int, char, bool, short, int, unsigned, long, float, double > == 3,
+                      "int is not found at position 3 in { int, bool, short, int, unsigned, long, float, double }");
+        static_assert(tl::find_v < unsigned, char, bool, short, int, unsigned, long, float, double > == 4,
+                      "unsigned is not found at position 4 in { unsigned, bool, short, int, unsigned, long, float, double }");
+        static_assert(tl::find_v < long, char, bool, short, int, unsigned, long, float, double > == 5,
+                      "long is not found at position 5 in { long, bool, short, int, unsigned, long, float, double }");
+        static_assert(tl::find_v < float, char, bool, short, int, unsigned, long, float, double > == 6,
+                      "float is not found at position 6 in { float, bool, short, int, unsigned, long, float, double }");
+        static_assert(tl::find_v < double, char, bool, short, int, unsigned, long, float, double > == 7,
+                      "double is not found at position 7 in { double, bool, short, int, unsigned, long, float, double }");
     }
 
-    auto constexpr test_that_the_index_of_a_type_with_modifiers_reference_or_pointer_is_correctly_detected_in_a_list_with_some_of_its_variants_and_strict_matching()
+    auto constexpr
+    test_that_the_index_of_a_type_with_modifiers_reference_or_pointer_is_correctly_detected_in_a_list_with_some_of_its_variants_and_strict_matching()
     {
-        static_assert(tl::find<tl::matching::strict, int, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 0,
+        static_assert(tl::find < tl::matching::strict, int, int, int const, int & , int const &, int &&, int *,
+            int *const, int const *, int const *const>() == 0,
             "int is not at index 0 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
-        static_assert(tl::find<tl::matching::strict, int const, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 1,
+        static_assert(tl::find < tl::matching::strict, int const, int, int const, int & , int const &, int &&, int *,
+            int *const, int const *, int const *const>() == 1,
             "'int const' is not at index 1 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
-        static_assert(tl::find<tl::matching::strict, int &, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 2,
+        static_assert(tl::find < tl::matching::strict, int & , int, int const, int & , int const &, int &&, int *,
+            int *const, int const *, int const *const>() == 2,
             "'int &' is not at index 2 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
-        static_assert(tl::find<tl::matching::strict, int const &, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 3,
+        static_assert(tl::find < tl::matching::strict, int const &, int, int const, int & , int const &, int &&, int *,
+            int *const, int const *, int const *const>() == 3,
             "'int const &' is not at index 3 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
-        static_assert(tl::find<tl::matching::strict, int &&, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 4,
+        static_assert(tl::find < tl::matching::strict, int && , int, int const, int & , int const &, int &&, int *,
+            int *const, int const *, int const *const>() == 4,
             "'int &&' is not at index 4 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
-        static_assert(tl::find<tl::matching::strict, int *, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 5,
+        static_assert(tl::find < tl::matching::strict, int * , int, int const, int & , int const &, int &&, int *,
+            int *const, int const *, int const *const>() == 5,
             "'int *' is not at index 5 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
-        static_assert(tl::find<tl::matching::strict, int *const, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 6,
+        static_assert(tl::find < tl::matching::strict, int *const, int, int const, int & , int const &, int &&, int *,
+            int *const, int const *, int const *const>() == 6,
             "'int *const' is not at index 6 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
-        static_assert(tl::find<tl::matching::strict, int const *, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 7,
+        static_assert(tl::find < tl::matching::strict, int const *, int, int const, int & , int const &, int &&, int *,
+            int *const, int const *, int const *const>() == 7,
             "'int const *' is not at index 7 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
-        static_assert(tl::find<tl::matching::strict, int const *const, int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const>() == 8,
+        static_assert(tl::find < tl::matching::strict, int const *const, int, int const, int & , int const &, int &&,
+            int *, int *const, int const *, int const *const>() == 8,
             "'int const *const' is not at index 8 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
     }
 
     auto constexpr test_that_the_result_of_find_is_the_index_of_the_first_matching_type_according_to_the_strategy()
     {
-        static_assert(tl::find<tl::matching::strict, int, int &&, int &, int const &, int const>() == -1
+        static_assert(tl::find < tl::matching::strict, int, int && , int & , int const &, int const>() == -1
             , "int is not found in { int &&, int &, int const &, int const }");
-        static_assert(tl::find<tl::matching::relaxed, int, int &&, int &, int const &, int const>() == 0
+        static_assert(tl::find < tl::matching::relaxed, int, int && , int & , int const &, int const>() == 0
             , "int is not found at 0 in { int &&, int &, int const &, int const } with ignore const and reference policy");
-        static_assert(tl::find<tl::matching::strict, int *const, int *, int const *, int *const, int const *const>() == 2
+        static_assert(tl::find < tl::matching::strict, int *const, int *, int const *, int *const, int const *const>
+        () == 2
             , "'int *const' is not found at 2 in { int *, int const *, int *const, int const *const }");
-        static_assert(tl::find<tl::matching::strict, int const *const, int *, int const *, int *const, int const *const>() == 3
+        static_assert(tl::find < tl::matching::strict,
+                      int const *const, int *, int const *, int *const, int const *const>() == 3
             , "'int const *const' is not found at 3 in { int *, int const *, int *const, int const *const }");
+    }
+} // namespace pi::test::type_lists::find
+
+namespace pi::test::type_lists::find_nth
+{
+    auto constexpr test_that_find_nth_returns_as_find_for_nth_equal_to_1()
+    {
+        static_assert(tl::find_nth_v<int, 1ULL, double, int> == tl::find_v<int, double, int>
+            , "find_nth_v and find_v give different results for nth=1 and the same type list.");
+        static_assert(tl::find_nth<tl::matching::strict, int, 1ULL, double, int>() == tl::find<tl::matching::strict, int, double, int>()
+            , "find_nth and find give different results for nth=1 and the same type list.");
+        static_assert(tl::find_nth<tl::matching::strict, int const, 1ULL, double, int>() == tl::npos
+            , "find_nth finds a int const in a list without int const.");
+        static_assert(tl::find_nth<tl::matching::strict, int const, 1ULL, double, int>() == tl::find<tl::matching::strict, int const, double, int>()
+            , "find_nth and find give different results for nth=1 and the same type list.");
     }
 
     auto constexpr test_that_find_nth_returns_the_expected_indices()
@@ -150,7 +177,7 @@ namespace pi::test::type_lists::find
         static_assert(tl::find_nth<tl::matching::strict, int const, 1ULL, double, int, float, int const>() == 3
             , "the first int is not found at index 1");
     }
-}
+} // namespace pi::test::type_lists::find_nth
 
 namespace pi::test::arguments::default_or_argument
 {
@@ -176,7 +203,7 @@ namespace pi::test::arguments::default_or_argument
         static_assert(arg::default_or_argument("x"sv, "y"sv) == "y"sv
             , "a string_view is not found");
     }
-}
+} // namespace pi::test::arguments::default_or_argument
 
 void pi::test::run()
 {
@@ -197,11 +224,13 @@ void pi::test::run()
         test_that_the_index_of_each_type_in_a_list_is_as_expected();
         test_that_the_index_of_a_type_with_modifiers_reference_or_pointer_is_correctly_detected_in_a_list_with_some_of_its_variants_and_strict_matching();
         test_that_the_result_of_find_is_the_index_of_the_first_matching_type_according_to_the_strategy();
-        test_that_find_nth_returns_the_expected_indices();
     } // type_list::find tests
 
     { // type_list::find_mth tests
-        using namespace pi::test::type_lists::find;
+        using namespace pi::test::type_lists::find_nth;
+
+        test_that_find_nth_returns_as_find_for_nth_equal_to_1();
+        test_that_find_nth_returns_the_expected_indices();
     } // type_list::find_nth tests
 
     { // pi::test::arguments::default_or_argument tests

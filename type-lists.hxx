@@ -18,19 +18,6 @@ namespace pi::type_lists
                 return 1 + find_nth<Type, Nth - std::is_same_v<Type, First>, Rest...>();
             }
         }
-
-        template <typename Type, typename First, typename ...Rest>
-        [[nodiscard]] auto constexpr find() noexcept
-        {
-            if constexpr (std::is_same_v<First, Type> || sizeof...(Rest) == 0ULL)
-            {
-                return 0;
-            }
-            else
-            {
-                return 1 + find<Type, Rest...>();
-            }
-        }
     } // namespace internal
 
     /**
@@ -87,7 +74,7 @@ namespace pi::type_lists
     template <matching Matching, typename Type, std::size_t Nth, typename ...TypeList>
     [[nodiscard]] auto constexpr find_nth() noexcept
     {
-        static_assert(sizeof...(TypeList) > 0ULL, "At least one type is expected.");
+        static_assert(sizeof...(TypeList) > 0ULL, "At least one type is expected in the type list.");
         static_assert(Nth > 0 && Nth <= sizeof...(TypeList), "Nth is a 1-based index at most equal to the number of the type list elements.");
 
         if constexpr (count<Matching, Type, TypeList...>() < Nth)
@@ -119,12 +106,7 @@ namespace pi::type_lists
     template <matching Matching, typename Type, typename ...TypeList>
     [[nodiscard]] auto constexpr find() noexcept
     {
-        if constexpr (count<Matching, Type, TypeList...>() == 0ULL)
-        {
-            return npos;
-        }
-
-        return internal::find<adjust_for_matching_t<Type, Matching>, adjust_for_matching_t<TypeList, Matching>...>();
+        return find_nth<Matching, Type, 1ULL, TypeList...>();
     }
 
     /**

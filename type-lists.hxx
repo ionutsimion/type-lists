@@ -30,6 +30,9 @@ namespace pi::type_lists
       , relaxed ///< Matches the types regardless of modifiers; also, values are matched to references.
     };
 
+    /**
+     * @typedef The exact type for @a matching::strict, the base (decayed) type else.
+     */
     template <typename Type, matching Matching>
     using adjust_for_matching_t = std::conditional_t<Matching == matching::strict, Type, std::decay_t<Type>>;
 

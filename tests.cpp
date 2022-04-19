@@ -205,6 +205,35 @@ namespace pi::test::arguments::default_or_argument
     }
 } // namespace pi::test::arguments::default_or_argument
 
+namespace pi::test::arguments::default_or_nth_argument
+{
+    auto constexpr test_that_if_the_type_of_an_argument_is_not_found_the_default_is_assigned() noexcept
+    {
+        using namespace std::string_view_literals;
+
+        static_assert(arg::default_or_nth_argument<1ULL>(1, 'a', 10.0, 12.1f) == 1
+            , "an int is found in { 'a', 10.0, 12.1f } and the default '1' is returned");
+        static_assert(arg::default_or_nth_argument<1ULL>("(null)"sv, 'a', 10.0, 12.1f) == "(null)"sv
+            , "a 'string_view' is found in { 'a', 10.0, 12.1f }, so the default '(null)' is returned");
+        static_assert(arg::default_or_nth_argument<1ULL>(1, 'a', 10.0, 12.1f) == 1
+            , "an int is found in { 'a', 10.0, 12.1f } and the default '1' is returned");
+        auto constexpr x = 42;
+        static_assert(arg::default_or_nth_argument<tl::matching::strict, 1ULL>(1, 'a', 10.0, 12.1f, x) == 1
+            , "an int is found in { 'a', 10.0, 12.1f, x }, where x is a constexpr int, and the default '1' is returned");
+        static_assert(arg::default_or_nth_argument<tl::matching::strict, 2ULL>(1, 'a', 10.0, x, 2) == 1);
+    }
+
+    auto constexpr test_that_if_the_type_of_an_argument_is_found_the_argument_of_that_type_is_returned() noexcept
+    {
+        using namespace std::string_view_literals;
+
+        static_assert(arg::default_or_nth_argument<1ULL>("x"sv, "y"sv) == "y"sv
+            , "The first string_view is not found");
+        static_assert(arg::default_or_nth_argument<2ULL>("x"sv, "y"sv, "z"sv) == "z"sv
+            , "The first string_view is not found");
+    }
+} // namespace pi::test::arguments::default_or_nth_argument
+
 void pi::test::run()
 {
     { // type_list::count tests
@@ -231,12 +260,19 @@ void pi::test::run()
 
         test_that_find_nth_returns_as_find_for_nth_equal_to_1();
         test_that_find_nth_returns_the_expected_indices();
-    } // type_list::find_nth tests
+    } // type_list::find_mth tests
 
-    { // pi::test::arguments::default_or_argument tests
+    { // type_list::default_or_argument tests
         using namespace pi::test::arguments::default_or_argument;
 
         test_that_if_the_type_of_an_argument_is_not_found_the_default_is_assigned();
         test_that_if_the_type_of_an_argument_is_found_the_argument_of_that_type_is_returned();
-    } // pi::test::arguments::default_or_argument tests
+    } // type_list::default_or_argument tests
+
+    { // type_list::default_or_nth_argument tests
+        using namespace pi::test::arguments::default_or_nth_argument;
+
+        test_that_if_the_type_of_an_argument_is_not_found_the_default_is_assigned();
+        test_that_if_the_type_of_an_argument_is_found_the_argument_of_that_type_is_returned();
+    } // type_list::default_or_nth_argument tests
 }

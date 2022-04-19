@@ -19,13 +19,13 @@ namespace pi::arguments
     } // namespace internal
 
     /**
-     * @brief Returns either the first argument matching the type of \a default_value, or the default_value.
+     * @brief Returns either the first argument matching the type of @a default_value, or the default_value.
      * @tparam Matching The searching policy (search for exactly the same type or ignore const, reference or const and reference on types from the list.
      * @tparam Type The type to search for.
      * @tparam ArgumentTypes The list of types in which to look for Type.
      * @param default_value The fall-back value in case not argument of the same type is found.
      * @param arguments A list of arguments of any type and number.
-     * @return The \a default_value or the argument of the same type as the default.
+     * @return The @a default_value or the argument of the same type as the default.
      */
     template <type_lists::matching Matching, typename Type, typename ...ArgumentTypes>
     [[nodiscard]] auto constexpr default_or_argument(Type &&default_value, ArgumentTypes &&...arguments) noexcept
@@ -39,13 +39,13 @@ namespace pi::arguments
     }
 
     /**
-     * @brief Returns either the first argument matching the type of \a default_value, or the default_value.
+     * @brief Returns either the first argument matching the type of @a default_value, or the default_value.
      * @tparam Type The type to search for.
      * @tparam ArgumentTypes The list of types in which to look for Type.
      * @param default_value The fall-back value in case not argument of the same type is found.
      * @param arguments A list of arguments of any type and number.
-     * @return The \a default_value or the argument of the same type as the default.
-     * @note Effectively calls \a default_or_argument with \a matching::strict strategy.
+     * @return The @a default_value or the argument of the same type as the default.
+     * @note Effectively calls @a default_or_argument with @a matching::strict strategy.
      */
     template <typename Type, typename ...ArgumentTypes>
     [[nodiscard]] auto constexpr default_or_argument(Type &&default_value, ArgumentTypes &&...arguments) noexcept

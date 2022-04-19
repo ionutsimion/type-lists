@@ -55,7 +55,7 @@ namespace pi::type_lists
 
     /**
      * @brief Count the number of appearances of a type in a list of types using a matching strategy.
-     * @tparam Matching The searching policy (search for exactly the same type or ignore const, reference or const and reference on types from the list.
+     * @tparam Matching The matching strategy (see @a matching).
      * @tparam Type The type which appearances we want to count the number of appearances in the list of types.
      * @tparam TypeList The list of types in which to look for Type.
      * @return The number of matches of Type in TypeList.
@@ -71,11 +71,19 @@ namespace pi::type_lists
      * @tparam Type The type which appearances we want to count the number of appearances in the list of types.
      * @tparam TypeList The list of types in which to look for Type.
      * @return The number of matches of Type in TypeList.
-     * @note Effectively calls \a count with \a matching::strict strategy.
+     * @note Effectively calls @a count with @a matching::strict strategy.
      */
     template <typename Type, typename ...TypeList>
     [[maybe_unused]] auto constexpr count_v = count<matching::relaxed, Type, TypeList...>();
 
+    /**
+     * Find the nth appearance of a type into the provided list of types, following a matching strategy.
+     * @tparam Matching The matching strategy (see @a matching).
+     * @tparam Type The type to search for.
+     * @tparam Nth Which instance of @a Type to look for.
+     * @tparam TypeList The list of types in which to look for @a Type.
+     * @return The index of @a Nth @a Type in @a TypeList if it exists, @a pi::type_list::npos otherwise.
+     */
     template <matching Matching, typename Type, std::size_t Nth, typename ...TypeList>
     [[nodiscard]] auto constexpr find_nth() noexcept
     {
@@ -90,15 +98,22 @@ namespace pi::type_lists
         return internal::find_nth<adjust_for_matching_t<Type, Matching>, Nth, adjust_for_matching_t<TypeList, Matching>...>();
     }
 
+    /**
+     * Find the nth appearance of a type into the provided list of types using the relaxed @a matching::strategy.
+     * @tparam Type The type to search for.
+     * @tparam Nth Which instance of @a Type to look for.
+     * @tparam TypeList The list of types in which to look for @a Type.
+     * @return The index of @a Nth @a Type in @a TypeList if it exists, @a pi::type_list::npos otherwise.
+     */
     template <typename Type, std::size_t Nth, typename ...TypeList>
     [[maybe_unused]] auto constexpr find_nth_v = find_nth<matching::relaxed, Type, Nth, TypeList...>();
 
     /**
      * @brief Find the first appearance of the first template parameter into the list of types which follows it.
-     * @tparam Matching The searching policy (search for exactly the same type or ignore const, reference or const and reference on types from the list.
+     * @tparam Matching The matching strategy (see @a matching).
      * @tparam Type The type to search for.
-     * @tparam TypeList The list of types in which to look for Type.
-     * @return The index of Type in TypeList. If no match is found, returns \a pi::type_list::npos.
+     * @tparam TypeList The list of types in which to look for @a Type.
+     * @return The index of @a Type in @a TypeList if it exists, @a pi::type_list::npos otherwise.
      */
     template <matching Matching, typename Type, typename ...TypeList>
     [[nodiscard]] auto constexpr find() noexcept
@@ -115,8 +130,8 @@ namespace pi::type_lists
      * @brief Find the first appearance of the first template parameter into the list of types which follows it.
      * @tparam Type The type to search for.
      * @tparam TypeList The list of types in which to look for Type.
-     * @return The index of Type in TypeList. If no match is found, returns \a pi::type_list::npos.
-     * @note Effectively calls \a find with \a matching::strict strategy.
+     * @return The index of Type in TypeList. If no match is found, returns @a pi::type_list::npos.
+     * @note Effectively calls @a find with @a matching::strict strategy.
      */
     template <typename Type, typename ...TypeList>
     [[maybe_unused]] auto constexpr find_v = find<matching::relaxed, Type, TypeList...>();

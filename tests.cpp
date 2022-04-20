@@ -156,43 +156,43 @@ namespace pi::test::type_lists::find_nth
 {
     auto constexpr test_that_find_nth_returns_as_find_for_nth_equal_to_1()
     {
-        static_assert(tl::find_nth_v<int, 1ULL, double, int> == tl::find_v<int, double, int>
-            , "find_nth_v and find_v give different results for nth=1 and the same type list.");
-        static_assert(tl::find_nth<tl::matching::strict, int, 1ULL, double, int>() == tl::find<tl::matching::strict, int, double, int>()
-            , "find_nth and find give different results for nth=1 and the same type list.");
-        static_assert(tl::find_nth<tl::matching::strict, int const, 1ULL, double, int>() == tl::npos
-            , "find_nth finds a int const in a list without int const.");
-        static_assert(tl::find_nth<tl::matching::strict, int const, 1ULL, double, int>() == tl::find<tl::matching::strict, int const, double, int>()
-            , "find_nth and find give different results for nth=1 and the same type list.");
+        static_assert(tl::find_nth_of_type_v<1ULL, int, double, int > == tl::find_v < int, double, int >
+            , "find_nth_of_type_v and find_v give different results for nth=1 and the same type list.");
+        static_assert(tl::find_nth_of_type<tl::matching::strict, 1ULL, int, double, int>() == tl::find<tl::matching::strict, int, double, int>()
+            , "find_nth_of_type and find give different results for nth=1 and the same type list.");
+        static_assert(tl::find_nth_of_type<tl::matching::strict, 1ULL, int const, double, int > () == tl::npos
+            , "find_nth_of_type finds a int const in a list without int const.");
+        static_assert(tl::find_nth_of_type<tl::matching::strict, 1ULL, int const, double, int > () == tl::find < tl::matching::strict, int const, double, int > ()
+            , "find_nth_of_type and find give different results for nth=1 and the same type list.");
     }
 
     auto constexpr test_that_find_nth_returns_the_expected_indices()
     {
-        static_assert(tl::find_nth_v<int, 1ULL, double, int> == 1
+        static_assert(tl::find_nth_of_type_v<1ULL, int, double, int> == 1
             , "the first int is not found at index 1");
-        static_assert(tl::find_nth_v<int, 2ULL, double, int, float, int> == 3
+        static_assert(tl::find_nth_of_type_v<2ULL, int, double, int, float, int> == 3
             , "the second int is not found at index 3");
-        static_assert(tl::find_nth<tl::matching::relaxed, int, 2ULL, double, int, float, int>() == 3
+        static_assert(tl::find_nth_of_type<tl::matching::relaxed, 2ULL, int, double, int, float, int>() == 3
             , "the second int is not found at index 3");
-        static_assert(tl::find_nth<tl::matching::strict, int const, 1ULL, double, int, float, int const>() == 3
+        static_assert(tl::find_nth_of_type<tl::matching::strict, 1ULL, int const, double, int, float, int const>() == 3
             , "the first int is not found at index 1");
     }
-} // namespace pi::test::type_lists::find_nth
+} // namespace pi::test::type_lists::find_nth_of_type
 
-namespace pi::test::arguments::default_or_argument
+namespace pi::test::arguments::get_first_of_type_or_default
 {
     auto constexpr test_that_if_the_type_of_an_argument_is_not_found_the_default_is_assigned() noexcept
     {
         using namespace std::string_view_literals;
 
-        static_assert(arg::default_or_argument(1, 'a', 10.0, 12.1f) == 1
+        static_assert(arg::get_first_of_type_or_default(1, 'a', 10.0, 12.1f) == 1
             , "an int is found in { 'a', 10.0, 12.1f } and the default '1' is returned");
-        static_assert(arg::default_or_argument("(null)"sv, 'a', 10.0, 12.1f) == "(null)"sv
+        static_assert(arg::get_first_of_type_or_default("(null)"sv, 'a', 10.0, 12.1f) == "(null)"sv
             , "a 'string_view' is found in { 'a', 10.0, 12.1f }, so the default '(null)' is returned");
-        static_assert(arg::default_or_argument(1, 'a', 10.0, 12.1f) == 1
+        static_assert(arg::get_first_of_type_or_default(1, 'a', 10.0, 12.1f) == 1
             , "an int is found in { 'a', 10.0, 12.1f } and the default '1' is returned");
         auto constexpr x = 42;
-        static_assert(arg::default_or_argument<tl::matching::strict>(1, 'a', 10.0, 12.1f, x) == 1
+        static_assert(arg::get_first_of_type_or_default<tl::matching::strict>(1, 'a', 10.0, 12.1f, x) == 1
             , "an int is found in { 'a', 10.0, 12.1f, x }, where x is a constexpr int, and the default '1' is returned");
     }
 
@@ -200,39 +200,39 @@ namespace pi::test::arguments::default_or_argument
     {
         using namespace std::string_view_literals;
 
-        static_assert(arg::default_or_argument("x"sv, "y"sv) == "y"sv
+        static_assert(arg::get_first_of_type_or_default("x"sv, "y"sv) == "y"sv
             , "a string_view is not found");
     }
-} // namespace pi::test::arguments::default_or_argument
+} // namespace pi::test::arguments::get_first_of_type_or_default
 
-namespace pi::test::arguments::default_or_nth_argument
+namespace pi::test::arguments::get_nth_of_type_or_default
 {
     auto constexpr test_that_if_the_type_of_an_argument_is_not_found_the_default_is_assigned() noexcept
     {
         using namespace std::string_view_literals;
 
-        static_assert(arg::default_or_nth_argument<1ULL>(1, 'a', 10.0, 12.1f) == 1
+        static_assert(arg::get_nth_of_type_or_default<1ULL>(1, 'a', 10.0, 12.1f) == 1
             , "an int is found in { 'a', 10.0, 12.1f } and the default '1' is returned");
-        static_assert(arg::default_or_nth_argument<1ULL>("(null)"sv, 'a', 10.0, 12.1f) == "(null)"sv
+        static_assert(arg::get_nth_of_type_or_default<1ULL>("(null)"sv, 'a', 10.0, 12.1f) == "(null)"sv
             , "a 'string_view' is found in { 'a', 10.0, 12.1f }, so the default '(null)' is returned");
-        static_assert(arg::default_or_nth_argument<1ULL>(1, 'a', 10.0, 12.1f) == 1
+        static_assert(arg::get_nth_of_type_or_default<1ULL>(1, 'a', 10.0, 12.1f) == 1
             , "an int is found in { 'a', 10.0, 12.1f } and the default '1' is returned");
         auto constexpr x = 42;
-        static_assert(arg::default_or_nth_argument<tl::matching::strict, 1ULL>(1, 'a', 10.0, 12.1f, x) == 1
+        static_assert(arg::get_nth_of_type_or_default<tl::matching::strict, 1ULL>(1, 'a', 10.0, 12.1f, x) == 1
             , "an int is found in { 'a', 10.0, 12.1f, x }, where x is a constexpr int, and the default '1' is returned");
-        static_assert(arg::default_or_nth_argument<tl::matching::strict, 2ULL>(1, 'a', 10.0, x, 2) == 1);
+        static_assert(arg::get_nth_of_type_or_default<tl::matching::strict, 2ULL>(1, 'a', 10.0, x, 2) == 1);
     }
 
     auto constexpr test_that_if_the_type_of_an_argument_is_found_the_argument_of_that_type_is_returned() noexcept
     {
         using namespace std::string_view_literals;
 
-        static_assert(arg::default_or_nth_argument<1ULL>("x"sv, "y"sv) == "y"sv
+        static_assert(arg::get_nth_of_type_or_default<1ULL>("x"sv, "y"sv) == "y"sv
             , "The first string_view is not found");
-        static_assert(arg::default_or_nth_argument<2ULL>("x"sv, "y"sv, "z"sv) == "z"sv
+        static_assert(arg::get_nth_of_type_or_default<2ULL>("x"sv, "y"sv, "z"sv) == "z"sv
             , "The first string_view is not found");
     }
-} // namespace pi::test::arguments::default_or_nth_argument
+} // namespace pi::test::arguments::get_nth_of_type_or_default
 
 void pi::test::run()
 {
@@ -262,17 +262,17 @@ void pi::test::run()
         test_that_find_nth_returns_the_expected_indices();
     } // type_list::find_mth tests
 
-    { // type_list::default_or_argument tests
-        using namespace pi::test::arguments::default_or_argument;
+    { // type_list::get_first_of_type_or_default tests
+        using namespace pi::test::arguments::get_first_of_type_or_default;
 
         test_that_if_the_type_of_an_argument_is_not_found_the_default_is_assigned();
         test_that_if_the_type_of_an_argument_is_found_the_argument_of_that_type_is_returned();
-    } // type_list::default_or_argument tests
+    } // type_list::get_first_of_type_or_default tests
 
-    { // type_list::default_or_nth_argument tests
-        using namespace pi::test::arguments::default_or_nth_argument;
+    { // type_list::get_nth_of_type_or_default tests
+        using namespace pi::test::arguments::get_nth_of_type_or_default;
 
         test_that_if_the_type_of_an_argument_is_not_found_the_default_is_assigned();
         test_that_if_the_type_of_an_argument_is_found_the_argument_of_that_type_is_returned();
-    } // type_list::default_or_nth_argument tests
+    } // type_list::get_nth_of_type_or_default tests
 }

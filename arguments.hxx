@@ -29,9 +29,9 @@ namespace pi::arguments
      * @return The @Nth argument of type @a Type or @a default_value
      */
     template <type_lists::matching Matching, size_t Nth, typename Type, typename ...TypeList>
-    [[nodiscard]] auto constexpr default_or_nth_argument([[maybe_unused]] Type &&default_value, [[maybe_unused]] TypeList &&...arguments) noexcept
+    [[nodiscard]] auto constexpr get_nth_of_type_or_default([[maybe_unused]] Type &&default_value, [[maybe_unused]] TypeList &&...arguments) noexcept
     {
-        if constexpr (auto constexpr index = type_lists::find_nth<Matching, Type, Nth, TypeList...>(); index != type_lists::npos)
+        if constexpr (auto constexpr index = type_lists::find_nth_of_type<Matching, Nth, Type, TypeList...>(); index != type_lists::npos)
         {
             return internal::get<index>(std::forward<TypeList>(arguments)...);
         }
@@ -47,12 +47,12 @@ namespace pi::arguments
      * @param default_value Value to return in case there is no @a Nth argument.
      * @param arguments List of arguments
      * @return The @Nth argument of type @a Type or @a default_value
-     * @note Calls @a default_or_nth_argument with relaxed @a type_list::matching strategy
+     * @note Calls @a get_nth_of_type_or_default with relaxed @a type_list::matching strategy
      */
     template <size_t Nth, typename Type, typename ...TypeList>
-    [[nodiscard]] auto constexpr default_or_nth_argument(Type &&default_value, TypeList &&...arguments) noexcept
+    [[nodiscard]] auto constexpr get_nth_of_type_or_default(Type &&default_value, TypeList &&...arguments) noexcept
     {
-        return default_or_nth_argument<type_lists::matching::relaxed, Nth, Type, TypeList...>(
+        return get_nth_of_type_or_default<type_lists::matching::relaxed, Nth, Type, TypeList...>(
             std::forward<Type>(default_value)
           , std::forward<TypeList>(arguments)...);
     }
@@ -67,9 +67,9 @@ namespace pi::arguments
      * @return The @a default_value or the argument of the same type as the default.
      */
     template <type_lists::matching Matching, typename Type, typename ...TypeList>
-    [[nodiscard]] auto constexpr default_or_argument(Type &&default_value, TypeList &&...arguments) noexcept
+    [[nodiscard]] auto constexpr get_first_of_type_or_default(Type &&default_value, TypeList &&...arguments) noexcept
     {
-        return default_or_nth_argument<Matching, 1ULL, Type, TypeList...>(
+        return get_nth_of_type_or_default<Matching, 1ULL, Type, TypeList...>(
             std::forward<Type>(default_value)
           , std::forward<TypeList>(arguments)...);
     }
@@ -81,11 +81,11 @@ namespace pi::arguments
      * @param default_value The fall-back value in case not argument of the same type is found.
      * @param arguments A list of arguments of any type and number.
      * @return The @a default_value or the argument of the same type as the default.
-     * @note Effectively calls @a default_or_argument with @a matching::strict strategy.
+     * @note Effectively calls @a get_first_of_type_or_default with @a matching::strict strategy.
      */
     template <typename Type, typename ...TypeList>
-    [[nodiscard]] auto constexpr default_or_argument(Type &&default_value, TypeList &&...arguments) noexcept
+    [[nodiscard]] auto constexpr get_first_of_type_or_default(Type &&default_value, TypeList &&...arguments) noexcept
     {
-        return default_or_argument<type_lists::matching::relaxed>(std::forward<Type>(default_value), std::forward<TypeList>(arguments)...);
+        return get_first_of_type_or_default<type_lists::matching::relaxed>(std::forward<Type>(default_value), std::forward<TypeList>(arguments)...);
     }
 } // namespace pi::arguments

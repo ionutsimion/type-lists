@@ -6,8 +6,8 @@ namespace pi::type_lists
 {
     namespace internal
     {
-        template <typename Type, std::size_t Nth, typename First, typename ...Rest>
-        [[nodiscard]] auto constexpr find_nth() noexcept
+        template <std::size_t Nth, typename Type, typename First, typename ...Rest>
+        [[nodiscard]] auto constexpr find_nth_of_type() noexcept
         {
             if constexpr ((Nth == 1ULL && std::is_same_v<First, Type>)|| sizeof...(Rest) == 0ULL)
             {
@@ -15,7 +15,7 @@ namespace pi::type_lists
             }
             else
             {
-                return 1 + find_nth<Type, Nth - std::is_same_v<Type, First>, Rest...>();
+                return 1 + find_nth_of_type<Nth - std::is_same_v<Type, First>, Type, Rest...>();
             }
         }
     } // namespace internal
@@ -71,8 +71,8 @@ namespace pi::type_lists
      * @tparam TypeList The list of types in which to look for @a Type.
      * @return The index of @a Nth @a Type in @a TypeList if it exists, @a pi::type_list::npos otherwise.
      */
-    template <matching Matching, typename Type, std::size_t Nth, typename ...TypeList>
-    [[nodiscard]] auto constexpr find_nth() noexcept
+    template <matching Matching, std::size_t Nth, typename Type, typename ...TypeList>
+    [[nodiscard]] auto constexpr find_nth_of_type() noexcept
     {
         static_assert(sizeof...(TypeList) > 0ULL, "At least one type is expected in the type list.");
         static_assert(Nth > 0 && Nth <= sizeof...(TypeList), "Nth is a 1-based index at most equal to the number of the type list elements.");
@@ -82,7 +82,7 @@ namespace pi::type_lists
             return npos;
         }
 
-        return internal::find_nth<adjust_for_matching_t<Type, Matching>, Nth, adjust_for_matching_t<TypeList, Matching>...>();
+        return internal::find_nth_of_type<Nth, adjust_for_matching_t<Type, Matching>, adjust_for_matching_t<TypeList, Matching>...>();
     }
 
     /**
@@ -91,10 +91,10 @@ namespace pi::type_lists
      * @tparam Nth Which instance of @a Type to look for.
      * @tparam TypeList The list of types in which to look for @a Type.
      * @return The index of @a Nth @a Type in @a TypeList if it exists, @a pi::type_list::npos otherwise.
-     * @note Effectively calls @a find_nth with @a matching::relaxed strategy.
+     * @note Effectively calls @a find_nth_of_type with @a matching::relaxed strategy.
      */
-    template <typename Type, std::size_t Nth, typename ...TypeList>
-    [[maybe_unused]] auto constexpr find_nth_v = find_nth<matching::relaxed, Type, Nth, TypeList...>();
+    template <std::size_t Nth, typename Type, typename ...TypeList>
+    [[maybe_unused]] auto constexpr find_nth_of_type_v = find_nth_of_type<matching::relaxed, Nth, Type, TypeList...>();
 
     /**
      * @brief Find the first appearance of the first template parameter into the list of types which follows it.
@@ -106,7 +106,7 @@ namespace pi::type_lists
     template <matching Matching, typename Type, typename ...TypeList>
     [[nodiscard]] auto constexpr find() noexcept
     {
-        return find_nth<Matching, Type, 1ULL, TypeList...>();
+        return find_nth_of_type<Matching, 1ULL, Type, TypeList...>();
     }
 
     /**

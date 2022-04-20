@@ -10,9 +10,29 @@
 namespace tl = pi::type_lists;
 namespace arg = pi::arguments;
 
+namespace pi::test::type_lists::nth_type
+{
+    auto constexpr test_that_the_first_type_in_a_list_is_the_expected_one() noexcept
+    {
+        static_assert(std::is_same_v<tl::nth_type<1ULL, int>, int>, "First type is not int.");
+        static_assert(!std::is_same_v<tl::nth_type<1ULL, double>, int>, "First type is int instead of double.");
+        static_assert(std::is_same_v<tl::nth_type<1ULL, double>, double>, "First type is not double.");
+        static_assert(std::is_same_v<tl::nth_type<1ULL, int const>, int const>, "First type is not int.");
+        static_assert(std::is_same_v<tl::nth_type<1ULL, struct s1>, struct s1>, "First type is not struct s1.");
+        static_assert(!std::is_same_v<tl::nth_type<1ULL, struct s1>, struct s2>, "First type is struct s1 instead of s2.");
+    }
+
+    auto constexpr test_that_the_nth_type_in_a_list_is_the_expected_one() noexcept
+    {
+        static_assert(std::is_same_v<tl::nth_type<2ULL, double, int>, int>, "second type is not int.");
+        static_assert(std::is_same_v<tl::nth_type<2ULL, double, volatile int>, volatile int>, "second type is not volatile int.");
+        static_assert(std::is_same_v<tl::nth_type<5ULL, int const, double, int volatile, double, int>, int>, "fifth type is not int.");
+    }
+} // pi::test::type_lists::nth_type
+
 namespace pi::test::type_lists::count
 {
-    auto constexpr test_that_a_type_is_found_once_in_a_list_with_unique_types_containing_that_type()
+    auto constexpr test_that_a_type_is_found_once_in_a_list_with_unique_types_containing_that_type() noexcept
     {
         static_assert(tl::count_v<char, char, bool, short, int, unsigned, long, float, double> == 1
             , "char is not found once in { char, bool, short, int, unsigned, long, float, double }");
@@ -32,7 +52,7 @@ namespace pi::test::type_lists::count
             , "double is not found once in { double, bool, short, int, unsigned, long, float, double }");
     }
 
-    auto constexpr test_that_a_type_is_not_found_in_a_list_with_types_other_than_itself()
+    auto constexpr test_that_a_type_is_not_found_in_a_list_with_types_other_than_itself() noexcept
     {
         static_assert(tl::count_v<char, bool, unsigned char, signed char, int8_t, uint8_t> == 0
             , "char is found in { bool, unsigned char, signed char, int8_t, uint8_t }");
@@ -42,7 +62,7 @@ namespace pi::test::type_lists::count
             , "int is found in { unsigned, uint32_t }");
     }
 
-    auto constexpr test_that_a_type_is_found_for_as_many_times_it_appears_in_the_list()
+    auto constexpr test_that_a_type_is_found_for_as_many_times_it_appears_in_the_list() noexcept
     {
         static_assert(tl::count_v<int, int, int> == 2
             , "int is not found twice in { int, int }");
@@ -50,7 +70,7 @@ namespace pi::test::type_lists::count
             , "int is not found five times in { int, int, int, int, int }");
     }
 
-    auto constexpr test_that_a_type_is_found_in_a_list_with_non_const_cont_references_only_if_is_identical_with_one_of_the_other_with_strict_matching()
+    auto constexpr test_that_a_type_is_found_in_a_list_with_non_const_cont_references_only_if_is_identical_with_one_of_the_other_with_strict_matching() noexcept
     {
         static_assert(tl::count<tl::matching::strict, int, int const, int &, int &&, int const &>() == 0
             , "int is found in { int const, int &, int &&, int const & }");
@@ -64,13 +84,13 @@ namespace pi::test::type_lists::count
             , "'int const &' is not found in { int const, int &, int &&, int const & }");
     }
 
-    auto constexpr test_that_a_type_is_found_four_times_in_a_list_with_itself_as_const_and_reference_and_const_reference_if_relaxed_matching_is_used()
+    auto constexpr test_that_a_type_is_found_four_times_in_a_list_with_itself_as_const_and_reference_and_const_reference_if_relaxed_matching_is_used() noexcept
     {
         static_assert(tl::count<tl::matching::relaxed, int, int const, int &, int &&, int const &>() == 4
             , "'int' is not found four times in { int, int, int, int }");
     }
 
-    auto constexpr test_that_a_pointer_to_a_type_is_found_once_in_a_list_with_pointer_to_type_and_pointer_to_const_type_and_const_to_pointer_to_const_pointer_with_strict_matching()
+    auto constexpr test_that_a_pointer_to_a_type_is_found_once_in_a_list_with_pointer_to_type_and_pointer_to_const_type_and_const_to_pointer_to_const_pointer_with_strict_matching() noexcept
     {
         static_assert(tl::count<tl::matching::strict, int *, int *, int *const, int const *, int const *const>() == 1
             , "'int *' is not found once in { int *, int *const, int const *, int const *const }");
@@ -85,7 +105,7 @@ namespace pi::test::type_lists::count
 
 namespace pi::test::type_lists::find
 {
-    auto constexpr test_that_the_index_of_each_type_in_a_list_is_as_expected()
+    auto constexpr test_that_the_index_of_each_type_in_a_list_is_as_expected() noexcept
     {
         static_assert(tl::find_v < char, char, bool, short, int, unsigned, long, float, double > == 0,
                       "char is not found at position 0 in { char, bool, short, int, unsigned, long, float, double }");
@@ -106,7 +126,7 @@ namespace pi::test::type_lists::find
     }
 
     auto constexpr
-    test_that_the_index_of_a_type_with_modifiers_reference_or_pointer_is_correctly_detected_in_a_list_with_some_of_its_variants_and_strict_matching()
+    test_that_the_index_of_a_type_with_modifiers_reference_or_pointer_is_correctly_detected_in_a_list_with_some_of_its_variants_and_strict_matching() noexcept
     {
         static_assert(tl::find < tl::matching::strict, int, int, int const, int & , int const &, int &&, int *,
             int *const, int const *, int const *const>() == 0,
@@ -137,7 +157,7 @@ namespace pi::test::type_lists::find
             "'int const *const' is not at index 8 in { int, int const, int &, int const &, int &&, int *, int *const, int const *, int const *const }");
     }
 
-    auto constexpr test_that_the_result_of_find_is_the_index_of_the_first_matching_type_according_to_the_strategy()
+    auto constexpr test_that_the_result_of_find_is_the_index_of_the_first_matching_type_according_to_the_strategy() noexcept
     {
         static_assert(tl::find < tl::matching::strict, int, int && , int & , int const &, int const>() == -1
             , "int is not found in { int &&, int &, int const &, int const }");
@@ -154,7 +174,7 @@ namespace pi::test::type_lists::find
 
 namespace pi::test::type_lists::find_nth
 {
-    auto constexpr test_that_find_nth_returns_as_find_for_nth_equal_to_1()
+    auto constexpr test_that_find_nth_returns_as_find_for_nth_equal_to_1() noexcept
     {
         static_assert(tl::find_nth_of_type_v<1ULL, int, double, int > == tl::find_v < int, double, int >
             , "find_nth_of_type_v and find_v give different results for nth=1 and the same type list.");
@@ -166,7 +186,7 @@ namespace pi::test::type_lists::find_nth
             , "find_nth_of_type and find give different results for nth=1 and the same type list.");
     }
 
-    auto constexpr test_that_find_nth_returns_the_expected_indices()
+    auto constexpr test_that_find_nth_returns_the_expected_indices() noexcept
     {
         static_assert(tl::find_nth_of_type_v<1ULL, int, double, int> == 1
             , "the first int is not found at index 1");
@@ -236,6 +256,12 @@ namespace pi::test::arguments::get_nth_of_type_or_default
 
 void pi::test::run()
 {
+    { // type_list::nth_type tests
+        using namespace pi::test::type_lists::nth_type;
+
+        test_that_the_first_type_in_a_list_is_the_expected_one();
+        test_that_the_nth_type_in_a_list_is_the_expected_one();
+    }
     { // type_list::count tests
         using namespace pi::test::type_lists::count;
 

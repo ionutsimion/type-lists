@@ -6,6 +6,20 @@ namespace pi::type_lists
 {
     namespace internal
     {
+        template <std::size_t Nth, typename Head, typename ...Tail>
+        struct nth_type
+        {
+            static_assert(Nth <= 1ULL + sizeof...(Tail), "Index out of bounds.");
+            using type = std::conditional_t<Nth == 1ULL, Head, typename nth_type<Nth - 1ULL, Tail...>::type>;
+        };
+        
+        template <std::size_t Nth, typename Type>
+        struct nth_type<Nth, Type>
+        {
+            static_assert(Nth == 1ULL, "Index out of bounds.");
+            using type = Type;
+        };
+
         template <std::size_t Nth, typename Type, typename First, typename ...Rest>
         [[nodiscard]] auto constexpr find_nth_of_type() noexcept
         {
@@ -19,6 +33,14 @@ namespace pi::type_lists
             }
         }
     } // namespace internal
+
+    /**
+     * @typedef The @a Nth type in a type list.
+     * @tparam Nth 1-based index of the type to get.
+     * @tparam TypeList List of types in which to search.
+     */
+    template <std::size_t Nth, typename ...TypeList>
+    using nth_type = typename internal::nth_type<Nth, TypeList...>::type;
 
     /**
      * @invariant Invalid position.
